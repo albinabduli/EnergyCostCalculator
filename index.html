@@ -249,11 +249,18 @@
 
         <main>
             <div class="info" id="intro">
-                <strong data-i18n="info_title">Based on the invoice structure from the XLSX file (EVN North Macedonia)</strong><br>
+                <strong data-i18n="info_title">Based on the EVN North Macedonia invoice structure</strong><br>
                 <span data-i18n="info_text">This calculator uses tariff blocks that adjust based on the number of days between meter readings. The low tariff is billed as recorded on the invoice.</span>
                 <div class="small" style="margin-top:8px;">
                     <a id="docsLink" href="docs.html" data-i18n="docs_link">How the measurement is taken (docs)</a>
                 </div>
+            </div>
+            
+            <div class="form-group" style="margin-bottom:20px;">
+                <label for="history" data-i18n="history">Previous calculations:</label>
+                <select id="history" class="lang-select" style="width:100%;">
+                    <option value="" data-i18n="history_none">No previous calculations</option>
+                </select>
             </div>
 
             <form id="calcForm" aria-labelledby="calcForm">
@@ -307,6 +314,9 @@
                 title: "Electricity Bill Calculator",
                 subtitle: "Based on EVN North Macedonia invoice structure",
                 language: "Language",
+                history: "Previous calculations:",
+                history_none: "No previous calculations",
+                history_option: "{date} (prev: {prevDate}, curr: {currDate})",
                 info_title: "Based on the EVN North Macedonia invoice structure",
                 info_text: "This calculator uses tariff blocks that adjust based on the number of days between meter readings. The low tariff is billed as recorded on the invoice.",
                 docs_link: "How the measurement is taken (docs)",
@@ -343,6 +353,9 @@
                 title: "Llogaritës i Faturës së Energjisë Elektrike",
                 subtitle: "Bazuar në strukturën e faturës së EVN Maqedoni e Veriut",
                 language: "Gjuha",
+                history: "Llogaritjet e mëparshme:",
+                history_none: "Nuk ka llogaritje të mëparshme",
+                history_option: "{date} (para: {prevDate}, tani: {currDate})",
                 info_title: "Bazuar në strukturën e faturës së EVN Maqedoni e Veriut",
                 info_text: "Ky llogaritës përdor blloqe tarifore që përshtaten bazuar në numrin e ditëve midis leximeve të matësit. Tarifa e lirë paguhet sipas asaj që është faturuar në faturë.",
                 docs_link: "Si matet konsumimi (dokumentacion)",
@@ -379,6 +392,9 @@
                 title: "Калкулатор за сметка за електрична енергија",
                 subtitle: "Врз основа на структурата на фактурата од EVN Северна Македонија",
                 language: "Јазик",
+                history: "Претходни пресметки:",
+                history_none: "Нема претходни пресметки",
+                history_option: "{date} (пред: {prevDate}, сега: {currDate})",
                 info_title: "Врз основа на структурата на фактурата од EVN Северна Македонија",
                 info_text: "Овој калкулатор користи тарифни блокови кои се прилагодуваат врз основа на бројот на денови помеѓу читањата на броилото. Евтината тарифа е фактурирана според вредностите на фактурата.",
                 docs_link: "Како се мери (документација)",
@@ -413,6 +429,92 @@
             }
         };
 
+        // --- Calculation history management ---
+        const HISTORY_KEY = 'gcc_history';
+        
+        // Load calculations from localStorage
+        const loadHistory = () => {
+            try {
+                return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+            } catch (e) {
+                return [];
+            }
+        };
+
+        // Save a calculation to history
+        const saveToHistory = (calc) => {
+            const history = loadHistory();
+            history.unshift(calc); // Add to start
+            // Keep last 100 calculations
+            if (history.length > 100) history.length = 100;
+            localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+            updateHistoryDropdown();
+        };
+
+        // Format a date for display
+        const formatDate = (date) => {
+            return new Date(date).toLocaleDateString();
+        };
+
+        // Update the history dropdown with saved calculations
+        const updateHistoryDropdown = () => {
+            const history = loadHistory();
+            const select = document.getElementById('history');
+            const lang = document.documentElement.lang;
+            const t = i18n[lang] || i18n.sq;
+            
+            // Clear existing options
+            while (select.options.length > 1) {
+                select.remove(1);
+            }
+
+            // Add calculations as options
+            history.forEach((calc, idx) => {
+                const option = document.createElement('option');
+                option.value = idx;
+                const label = t.history_option
+                    .replace('{date}', formatDate(calc.calcDate))
+                    .replace('{prevDate}', formatDate(calc.prevDate))
+                    .replace('{currDate}', formatDate(calc.currDate));
+                option.textContent = label;
+                select.appendChild(option);
+            });
+
+            // Update empty state text
+            select.options[0].textContent = t[history.length ? 'history_option_select' : 'history_none'];
+        };
+
+        // Load calculation into form
+        const loadCalculation = (calc) => {
+            document.getElementById('prevDate').value = calc.prevDate;
+            document.getElementById('currDate').value = calc.currDate;
+            document.getElementById('prevHigh').value = calc.prevHigh;
+            document.getElementById('prevLow').value = calc.prevLow;
+            document.getElementById('currHigh').value = calc.currHigh;
+            document.getElementById('currLow').value = calc.currLow;
+        };
+
+        // Auto-fill from last calculation if 28+ days passed
+        const autoFillFromLast = () => {
+            const history = loadHistory();
+            if (history.length === 0) return;
+            
+            const lastCalc = history[0];
+            const lastDate = new Date(lastCalc.currDate);
+            const today = new Date();
+            const daysPassed = Math.round((today - lastDate) / (1000 * 60 * 60 * 24));
+            
+            if (daysPassed >= 28) {
+                // Use last current readings as new previous readings
+                document.getElementById('prevDate').value = lastCalc.currDate;
+                document.getElementById('currDate').value = today.toISOString().split('T')[0];
+                document.getElementById('prevHigh').value = lastCalc.currHigh;
+                document.getElementById('prevLow').value = lastCalc.currLow;
+                document.getElementById('currHigh').value = '';
+                document.getElementById('currLow').value = '';
+            }
+        };
+
         // --- Helpers for i18n ---
         const applyTranslations = (lang) => {
             document.documentElement.lang = lang;
@@ -427,6 +529,8 @@
             });
             // Update title separately
             if (dict.title) document.title = dict.title;
+            // Update history dropdown with new language
+            updateHistoryDropdown();
         };
 
         // --- Save/load language preference ---
@@ -445,10 +549,40 @@
         });
 
         // --- Calculation logic (same as original, with translated output) ---
+        // Setup history dropdown handler
+        document.getElementById('history').addEventListener('change', function(e) {
+            const idx = parseInt(e.target.value);
+            if (isNaN(idx)) return;
+            
+            const history = loadHistory();
+            if (idx >= 0 && idx < history.length) {
+                loadCalculation(history[idx]);
+                // Trigger form calculation to show results
+                document.getElementById('calcForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // Initial setup
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHistoryDropdown();
+            autoFillFromLast();
+        });
+
         document.getElementById('calcForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const lang = localStorage.getItem(LANG_KEY) || 'en';
             const t = i18n[lang];
+
+            // Get form values for saving
+            const formData = {
+                calcDate: new Date().toISOString(),
+                prevDate: document.getElementById('prevDate').value,
+                currDate: document.getElementById('currDate').value,
+                prevHigh: document.getElementById('prevHigh').value,
+                prevLow: document.getElementById('prevLow').value,
+                currHigh: document.getElementById('currHigh').value,
+                currLow: document.getElementById('currLow').value
+            };
 
             // Readings
             const prevHigh = parseFloat(document.getElementById('prevHigh').value) || 0;
@@ -545,6 +679,9 @@
                 </table>`;
 
             document.getElementById('result').innerHTML = html;
+            
+            // Save calculation to history
+            saveToHistory(formData);
         });
 
         // Ensure docs link keeps language preference
