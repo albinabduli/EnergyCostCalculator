@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title data-i18n="title">Electricity Bill Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f8f9fa; color:#2c3e50; }
+        header { display:flex; align-items:center; justify-content:space-between; gap:10px; max-width:1000px; margin-bottom:18px; }
+        h1 { margin:0; font-size:1.35rem; }
+        form { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); max-width: 700px; }
+        label { display: block; margin: 12px 0 6px; font-weight: bold; color: #34495e; }
+        input { padding: 10px; width: 100%; border: 1px solid #ddd; border-radius: 4px; font-size: 16px; box-sizing:border-box; }
+        .controls { display:flex; gap:12px; align-items:center; }
+        button { margin-top: 14px; padding: 12px 18px; background: #e74c3c; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
+        button:hover { background: #c0392b; }
+        #result { margin-top: 20px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.06); max-width: 900px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 12px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background: #f2f2f2; font-weight: bold; color: #2c3e50; }
+        tr:nth-child(even) { background-color: #fafafa; }
+        .total { font-weight: bold; background: #e8f4fc !important; }
+        .info { background: #e8f5e9; padding: 14px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; color:#2c3e50; }
+        .small { font-size:0.95rem; color:#555; margin-top:6px;}
+        footer { margin-top:20px; font-size:13px; color:#666; }
+        .lang-select { padding:8px; border-radius:6px; border:1px solid #ddd; background:white; }
+        @media (max-width:640px){
+            header { flex-direction:column; align-items:flex-start; gap:8px; }
+            .controls { flex-direction:column; align-items:stretch; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1 data-i18n="title">Electricity Bill Calculator</h1>
+            <div class="small" data-i18n="subtitle">Based on EVN North Macedonia invoice structure (XLSX)</div>
+        </div>
+        <div class="controls">
+            <label for="lang" style="margin:0;font-weight:600;color:#34495e;" data-i18n="language">Language</label>
+            <select id="lang" class="lang-select" aria-label="language selector">
+                <option value="en">English</option>
+                <option value="sq">Shqip (Albanian)</option>
+                <option value="mk">Македонски (Macedonian)</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <div class="info" id="intro">
+            <strong data-i18n="info_title">Based on the invoice structure from the XLSX file (EVN North Macedonia)</strong><br>
+            <span data-i18n="info_text">This calculator uses tariff blocks from your file. The low tariff includes <strong>100 kWh free</strong> as shown by invoiced differences (example 556 → 456 billed).</span>
+            <div class="small" style="margin-top:8px;">
+                <a id="docsLink" href="docs.html" data-i18n="docs_link">How the measurement is taken (docs)</a>
+            </div>
+        </div>
+
+        <form id="calcForm" aria-labelledby="calcForm">
+            <label for="prevHigh" data-i18n="prevHigh">Previous month reading (high tariff):</label>
+            <input type="number" id="prevHigh" required value="28157">
+
+            <label for="prevLow" data-i18n="prevLow">Previous month reading (low tariff):</label>
+            <input type="number" id="prevLow" required value="26713">
+
+            <label for="currHigh" data-i18n="currHigh">Current month reading (high tariff):</label>
+            <input type="number" id="currHigh" required value="28678">
+
+            <label for="currLow" data-i18n="currLow">Current month reading (low tariff):</label>
+            <input type="number" id="currLow" required value="27269">
+
+            <button type="submit" id="calcBtn" data-i18n="calcBtn">Calculate bill</button>
+        </form>
+
+        <div id="result" aria-live="polite"></div>
+    </main>
+
+    <footer>
+        <div class="small" data-i18n="footer_note">You can host this page as index.html on GitHub Pages. Language preference is saved in local storage.</div>
+    </footer>
+
+    <script>
+        // --- Translations ---
+        const i18n = {
+            en: {
+                title: "Electricity Bill Calculator",
+                subtitle: "Based on EVN North Macedonia invoice structure (XLSX)",
+                language: "Language",
+                info_title: "Based on the invoice structure from the XLSX file (EVN North Macedonia)",
+                info_text: "This calculator uses tariff blocks from your file. The low tariff includes <strong>100 kWh free</strong> as shown by invoiced differences (example 556 → 456 billed).",
+                docs_link: "How the measurement is taken (docs)",
+                prevHigh: "Previous month reading (high tariff):",
+                prevLow: "Previous month reading (low tariff):",
+                currHigh: "Current month reading (high tariff):",
+                currLow: "Current month reading (low tariff):",
+                calcBtn: "Calculate bill",
+                results: "Calculation results",
+                highConsumption: "High-tariff consumption",
+                lowConsumption: "Low-tariff consumption",
+                billedLow: "billed after 100 kWh free",
+                totalConsumption: "Total consumption",
+                desc: "Description",
+                kWh: "kWh",
+                price: "Price (MKD/kWh)",
+                amount: "Amount (MKD)",
+                block1: "Block 1 (0–210 kWh)",
+                block2: "Block 2 (210–630 kWh)",
+                block3: "Block 3 (630–1050 kWh)",
+                block4: "Block 4 (>1050 kWh)",
+                lowTariff: "Low tariff (after 100 kWh free)",
+                transmission: "Energy transmission",
+                accessFee: "Access fee (fixed)",
+                subtotal: "Subtotal before VAT",
+                vat: "VAT (18%)",
+                otherTax: "Service tax",
+                totalPay: "TOTAL TO PAY",
+                footer_note: "You can host this page as index.html on GitHub Pages. Language preference is saved in local storage."
+            },
+            sq: {
+                title: "Llogaritës i Faturës së Energjisë Elektrike",
+                subtitle: "Bazuar në strukturën e faturës nga skedari XLSX (EVN Maqedoni e Veriut)",
+                language: "Gjuha",
+                info_title: "Bazuar në strukturën e faturës nga skedari XLSX (EVN Maqedoni e Veriut)",
+                info_text: "Ky llogaritës përdor tarifat dhe blloqet nga skedari juaj. Konsumi i tarifës së lirë ka <strong>100 kWh falas</strong> (siç tregohet nga diferenca 556 → 456 kWh të faturuara).",
+                docs_link: "Si matet konsumimi (dokumentacion)",
+                prevHigh: "Leximi i muajit të kaluar (e shtrejtë):",
+                prevLow: "Leximi i muajit të kaluar (e lirë):",
+                currHigh: "Leximi i këtij muaji (e shtrejtë):",
+                currLow: "Leximi i këtij muaji (e lirë):",
+                calcBtn: "Llogarit Faturën",
+                results: "Rezultatet e Llogaritjes",
+                highConsumption: "Konsumi i tarifës së shtrenjtë",
+                lowConsumption: "Konsumi i tarifës së lirë",
+                billedLow: "faturuar pas 100 kWh falas",
+                totalConsumption: "Totali i konsumit",
+                desc: "Përshkrim",
+                kWh: "kWh",
+                price: "Çmimi (denarë/kWh)",
+                amount: "Shuma (denarë)",
+                block1: "Blloku 1 (0–210 kWh)",
+                block2: "Blloku 2 (210–630 kWh)",
+                block3: "Blloku 3 (630–1050 kWh)",
+                block4: "Blloku 4 (>1050 kWh)",
+                lowTariff: "Tarifa e lirë (pas 100 kWh falas)",
+                transmission: "Transmetimi i energjisë",
+                accessFee: "Taksa e qasjes (fiks)",
+                subtotal: "Nën-totali para TVSH",
+                vat: "TVSH (18%)",
+                otherTax: "Taksa për shërbime",
+                totalPay: "TOTAL PËR TË PAGUAR",
+                footer_note: "Mund ta vendosni këtë faqe si index.html në GitHub Pages. Preferenca e gjuhës ruhet në local storage."
+            },
+            mk: {
+                title: "Калкулатор за сметка за електрична енергија",
+                subtitle: "Врз основа на структурата на фактурата од XLSX фајлот (EVN Северна Македонија)",
+                language: "Јазик",
+                info_title: "Врз основа на структурата на фактурата од XLSX фајлот (EVN Северна Македонија)",
+                info_text: "Овој калкулатор ги користи тарифните блокови од вашиот фајл. Ниската тарифа вклучува <strong>100 kWh бесплатно</strong> (како што се гледа од разликата 556 → 456 kWh фактурирано).",
+                docs_link: "Како се мери (документација)",
+                prevHigh: "Претходно месечно читање (скапо):",
+                prevLow: "Претходно месечно читање (евтино):",
+                currHigh: "Тековно читање (скапо):",
+                currLow: "Тековно читање (евтино):",
+                calcBtn: "Пресметај сметка",
+                results: "Резултати од пресметката",
+                highConsumption: "Потрошувачка на скапа тарифа",
+                lowConsumption: "Потрошувачка на евтина тарифа",
+                billedLow: "фактурирано по 100 kWh бесплатно",
+                totalConsumption: "Вкупна потрошувачка",
+                desc: "Опис",
+                kWh: "kWh",
+                price: "Цена (ден/kWh)",
+                amount: "Сума (денари)",
+                block1: "Блок 1 (0–210 kWh)",
+                block2: "Блок 2 (210–630 kWh)",
+                block3: "Блок 3 (630–1050 kWh)",
+                block4: "Блок 4 (>1050 kWh)",
+                lowTariff: "Евтина тарифа (по 100 kWh бесплатно)",
+                transmission: "Трансмисија на енергија",
+                accessFee: "Такса за пристап (фиксна)",
+                subtotal: "Вкупно пред ДДВ",
+                vat: "ДДВ (18%)",
+                otherTax: "Такса за услуги",
+                totalPay: "ВКУПНО ЗА ПЛАЌАЊЕ",
+                footer_note: "Можете да ја хостирате оваа страница како index.html на GitHub Pages. Јазичната преференца се чува во local storage."
+            }
+        };
+
+        // --- Helpers for i18n ---
+        const applyTranslations = (lang) => {
+            document.documentElement.lang = lang;
+            const dict = i18n[lang] || i18n.en;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (!key) return;
+                // preserve innerHTML if translation contains markup
+                if (dict[key]) {
+                    el.innerHTML = dict[key];
+                }
+            });
+            // Update title separately
+            if (dict.title) document.title = dict.title;
+        };
+
+        // --- Save/load language preference ---
+        const LANG_KEY = 'gcc_lang';
+        const langSelect = document.getElementById('lang');
+        const saved = localStorage.getItem(LANG_KEY) || navigator.language?.slice(0,2) || 'en';
+        // normalize
+        const normalized = ['en','sq','mk'].includes(saved) ? saved : (saved === 'sq' ? 'sq' : (saved === 'mk' ? 'mk' : 'en'));
+        langSelect.value = normalized;
+        applyTranslations(normalized);
+
+        langSelect.addEventListener('change', () => {
+            const v = langSelect.value;
+            localStorage.setItem(LANG_KEY, v);
+            applyTranslations(v);
+        });
+
+        // --- Calculation logic (same as original, with translated output) ---
+        document.getElementById('calcForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const lang = localStorage.getItem(LANG_KEY) || 'en';
+            const t = i18n[lang];
+
+            // Readings
+            const prevHigh = parseFloat(document.getElementById('prevHigh').value) || 0;
+            const prevLow = parseFloat(document.getElementById('prevLow').value) || 0;
+            const currHigh = parseFloat(document.getElementById('currHigh').value) || 0;
+            const currLow = parseFloat(document.getElementById('currLow').value) || 0;
+
+            // Differences
+            const diffHigh = currHigh - prevHigh;
+            const diffLow = currLow - prevLow;
+
+            // Constants (from XLSX)
+            const rateBlok1 = 4.4376;
+            const rateBlok2 = 5.5664;
+            const rateBlok3 = 7.4314;
+            const rateBlok4 = 18.3035;
+            const rateLow = 1.9765;
+            const transRate = 2.1418;
+            const accessFee = 200;
+            const vatRate = 0.18;
+            const otherTax = 184;
+            const freeLow = 100; // 100 kWh free low tariff
+
+            // High tariff blocks
+            let blok1 = Math.min(Math.max(diffHigh,0), 210);
+            let cost1 = blok1 * rateBlok1;
+
+            let remaining = diffHigh - 210;
+            let blok2 = Math.min(Math.max(remaining, 0), 420);
+            let cost2 = blok2 * rateBlok2;
+
+            remaining -= blok2;
+            let blok3 = Math.min(Math.max(remaining, 0), 420);
+            let cost3 = blok3 * rateBlok3;
+
+            let blok4 = Math.max(remaining - 420, 0);
+            let cost4 = blok4 * rateBlok4;
+
+            const highCost = cost1 + cost2 + cost3 + cost4;
+
+            // Low tariff (with 100 kWh free)
+            const chargedLow = Math.max(diffLow - freeLow, 0);
+            const lowCost = chargedLow * rateLow;
+
+            // Total kWh
+            const totalKWh = Math.max(diffHigh,0) + Math.max(diffLow,0);
+
+            // Transmission
+            const transCost = totalKWh * transRate;
+
+            // Subtotal before VAT
+            const subtotal = highCost + lowCost + transCost + accessFee;
+
+            // VAT 18%
+            const vat = subtotal * vatRate;
+
+            // Total final
+            const total = subtotal + vat + otherTax;
+
+            // Build results with translations
+            const nf = new Intl.NumberFormat('en-US', { maximumFractionDigits: 4 });
+            const nf2 = new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            let html = `<h2>${t.results}</h2>
+                <p><strong>${t.highConsumption}:</strong> ${diffHigh} ${t.kWh || 'kWh'}</p>
+                <p><strong>${t.lowConsumption}:</strong> ${diffLow} ${t.kWh || 'kWh'} (${t.billedLow}: ${chargedLow} ${t.kWh || 'kWh'})</p>
+                <p><strong>${t.totalConsumption}:</strong> ${totalKWh} ${t.kWh || 'kWh'}</p>
+                <table>
+                    <tr><th>${t.desc}</th><th>${t.kWh}</th><th>${t.price}</th><th>${t.amount}</th></tr>
+                    <tr><td>${t.block1}</td><td>${blok1}</td><td>${rateBlok1}</td><td>${nf.format(cost1)}</td></tr>
+                    <tr><td>${t.block2}</td><td>${blok2}</td><td>${rateBlok2}</td><td>${nf.format(cost2)}</td></tr>
+                    <tr><td>${t.block3}</td><td>${blok3}</td><td>${rateBlok3}</td><td>${nf.format(cost3)}</td></tr>
+                    <tr><td>${t.block4}</td><td>${blok4}</td><td>${rateBlok4}</td><td>${nf.format(cost4)}</td></tr>
+                    <tr><td>${t.lowTariff}</td><td>${chargedLow}</td><td>${rateLow}</td><td>${nf.format(lowCost)}</td></tr>
+                    <tr><td>${t.transmission}</td><td>${totalKWh}</td><td>${transRate}</td><td>${nf.format(transCost)}</td></tr>
+                    <tr><td>${t.accessFee}</td><td>-</td><td>-</td><td>${nf2.format(accessFee)}</td></tr>
+                    <tr><td><strong>${t.subtotal}</strong></td><td>-</td><td>-</td><td><strong>${nf.format(subtotal)}</strong></td></tr>
+                    <tr><td>${t.vat}</td><td>-</td><td>-</td><td>${nf.format(vat)}</td></tr>
+                    <tr><td>${t.otherTax}</td><td>-</td><td>-</td><td>${nf2.format(otherTax)}</td></tr>
+                    <tr class="total"><td><strong>${t.totalPay}</strong></td><td>-</td><td>-</td><td><strong>${nf2.format(total)}</strong> denarë</td></tr>
+                </table>`;
+
+            document.getElementById('result').innerHTML = html;
+        });
+
+        // Ensure docs link keeps language preference
+        document.getElementById('docsLink').addEventListener('click', function(e){
+            // keep normal navigation (docs.html will read localStorage)
+        });
+    </script>
+</body>
+</html>

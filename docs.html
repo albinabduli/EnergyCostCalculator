@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title data-i18n="title">How the meter measurements are taken</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin:20px; background:#fafafa; color:#22313f; }
+        main { max-width:900px; background:white; padding:18px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+        h1 { margin-top:0; }
+        .section { margin-top:14px; }
+        .note { background:#fffbe6; padding:10px; border-radius:6px; margin-top:10px; }
+        .kbd { background:#f2f2f2; padding:3px 8px; border-radius:4px; font-family:monospace; }
+        .lang-select { padding:8px; border-radius:6px; border:1px solid #ddd; background:white; }
+        a { color:#1a73e8; }
+    </style>
+</head>
+<body>
+    <header style="display:flex;justify-content:space-between;align-items:center;max-width:900px;margin-bottom:12px;">
+        <h2 data-i18n="title">How the meter measurements are taken</h2>
+        <div>
+            <select id="lang" class="lang-select" aria-label="language selector">
+                <option value="en">English</option>
+                <option value="sq">Shqip (Albanian)</option>
+                <option value="mk">Македонски (Macedonian)</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <section class="section">
+            <p data-i18n="intro"><strong>Reference:</strong> The official EVN documentation for tariff system is here: <a href="https://evn.mk/AboutInvoices/TariffSystem.aspx" target="_blank" rel="noopener">https://evn.mk/AboutInvoices/TariffSystem.aspx</a></p>
+        </section>
+
+        <section class="section">
+            <h3 data-i18n="how_title">How to read the meter display</h3>
+            <p data-i18n="how_text">Many modern electricity meters cycle through multiple displays. Typically the display flashes the current time, then the date, and afterwards shows measurement codes. In EVN meters the numeric codes indicate different totals:</p>
+            <ul>
+                <li><strong>180</strong> — total energy (kWh)</li>
+                <li><strong>181</strong> — high (peak) tariff energy (kWh)</li>
+                <li><strong>182</strong> — low (off-peak) tariff energy (kWh)</li>
+            </ul>
+
+            <div class="note" data-i18n="how_note">Procedure: press the meter's front button repeatedly (or wait) until you see the meter show the numeric code (e.g., "180") followed by the kWh number. Note the value shown after the code. For high and low tariff readings look for codes 181 and 182 respectively.</div>
+
+            <p data-i18n="how_example"><strong>Example:</strong> The display sequence can look like: time → date → 180 012345.67 → 181 006789.10 → 182 005556.57. In this example 180 is the total, 181 is high-tariff reading, and 182 is low-tariff reading.</p>
+        </section>
+
+        <section class="section">
+            <h3 data-i18n="billing_title">Notes for billing and the calculator</h3>
+            <p data-i18n="billing_text">To use the calculator on the main page, input the previous and current readings for high and low tariffs (codes 181 and 182). The calculator computes the difference (current − previous) for each tariff and applies tariff blocks and the low-tariff free allowance (commonly 100 kWh free in your tariff data).</p>
+            <p data-i18n="billing_more">If your meter shows totals with more than two decimals, you can round or keep the decimals — the calculator accepts decimal readings.</p>
+        </section>
+
+        <section class="section">
+            <h3 data-i18n="safety_title">Safety and tips</h3>
+            <ul>
+                <li data-i18n="tip_1">Always read the numeric code then the number that follows; do not mix codes.</li>
+                <li data-i18n="tip_2">If the display is confusing, take photos while cycling the display — this helps identify codes and values later.</li>
+                <li data-i18n="tip_3">If you suspect the meter is faulty, contact your supplier (EVN) or authorized technician.</li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <p class="small" data-i18n="footer">This documentation is a short guide. For official tariff rules and details see EVN's Tariff System page linked above.</p>
+            <p style="margin-top:12px;"><a href="index.html" data-i18n="back">Back to calculator</a></p>
+        </section>
+    </main>
+
+    <script>
+        // Simple multi-lang for docs using same keys as content
+        const texts = {
+            en: {
+                title: "How the meter measurements are taken",
+                intro: "<strong>Reference:</strong> The official EVN documentation for tariff system is here: <a href='https://evn.mk/AboutInvoices/TariffSystem.aspx' target='_blank' rel='noopener'>https://evn.mk/AboutInvoices/TariffSystem.aspx</a>",
+                how_title: "How to read the meter display",
+                how_text: "Many modern electricity meters cycle through multiple displays. Typically the display flashes the current time, then the date, and afterwards shows measurement codes. In EVN meters the numeric codes indicate different totals:",
+                how_note: "Procedure: press the meter's front button repeatedly (or wait) until you see the meter show the numeric code (e.g., \"180\") followed by the kWh number. Note the value shown after the code. For high and low tariff readings look for codes 181 and 182 respectively.",
+                how_example: "Example: The display sequence can look like: time → date → 180 012345.67 → 181 006789.10 → 182 005556.57. In this example 180 is the total, 181 is high-tariff reading, and 182 is low-tariff reading.",
+                billing_title: "Notes for billing and the calculator",
+                billing_text: "To use the calculator on the main page, input the previous and current readings for high and low tariffs (codes 181 and 182). The calculator computes the difference (current − previous) for each tariff and applies tariff blocks and the low-tariff free allowance (commonly 100 kWh free in your tariff data).",
+                billing_more: "If your meter shows totals with more than two decimals, you can round or keep the decimals — the calculator accepts decimal readings.",
+                safety_title: "Safety and tips",
+                tip_1: "Always read the numeric code then the number that follows; do not mix codes.",
+                tip_2: "If the display is confusing, take photos while cycling the display — this helps identify codes and values later.",
+                tip_3: "If you suspect the meter is faulty, contact your supplier (EVN) or authorized technician.",
+                footer: "This documentation is a short guide. For official tariff rules and details see EVN's Tariff System page linked above.",
+                back: "Back to calculator"
+            },
+            sq: {
+                title: "Si matet konsumimi nga matësi",
+                intro: "<strong>Referencë:</strong> Dokumentacioni zyrtar i EVN për sistemin e tarifave është këtu: <a href='https://evn.mk/AboutInvoices/TariffSystem.aspx' target='_blank' rel='noopener'>https://evn.mk/AboutInvoices/TariffSystem.aspx</a>",
+                how_title: "Si të lexoni ekranin e matësit",
+                how_text: "Shumë matare moderne shfaqin ciklisht disa vlera në ekran. Zakonisht ekrani shfaq orën, më pas datën, dhe më pas kodet e matjeve. Në matëset e EVN kodet numerike tregojnë totalet:",
+                how_note: "Procedura: shtypni vazhdimisht butonin në pjesën e përparme të matësit (ose prisni) deri sa të shihni kodin numerik (p.sh. \"180\") i ndjekur nga numri në kWh. Shënoni vlerën pas kodit. Për leximet e tarifës së lartë dhe të ulët kërkoni kodet 181 dhe 182 përkatësisht.",
+                how_example: "Shembull: Seanca e shfaqjes mund të duket: ora → data → 180 012345.67 → 181 006789.10 → 182 005556.57. Në këtë shembull 180 është totali, 181 është leximi i tarifës së lartë, dhe 182 është leximi i tarifës së ulët.",
+                billing_title: "Shënime për faturimin dhe llogaritësin",
+                billing_text: "Për të përdorur llogaritësin në faqen kryesore, vendosni leximet e mëparshme dhe aktuale për tarifat e larta dhe të ulëta (kodet 181 dhe 182). Llogaritësi bën dallimin (aktual – mëparshëm) për çdo tarifë dhe aplikon blloqet e tarifave dhe zbritjen e 100 kWh për tarifën e ulët.",
+                billing_more: "Nëse matësi tregon total me më shumë se dy dhjetësorë, mund ta rrumbullakosni ose ta lini — llogaritësi pranon lexime me dhjetësor.",
+                safety_title: "Siguria dhe këshillat",
+                tip_1: "Gjithmonë lexoni kodin numerik pastaj numrin që pason; mos i përzieni kodet.",
+                tip_2: "Nëse shfaqja është konfuze, bëni foto ndërsa qarkulloni shfaqen — kjo ndihmon në identifikimin e kodeve më vonë.",
+                tip_3: "Nëse dyshoni se matësi është defekt, kontaktoni furnizuesin tuaj (EVN) ose një teknik të autorizuar.",
+                footer: "Kjo dokumentacion është një udhëzues i shkurtër. Për rregulla zyrtare të tarifave dhe detaje, shihni faqen e EVN për sistemin e tarifave.",
+                back: "Kthehu te llogaritësi"
+            },
+            mk: {
+                title: "Како се вршат мерењата на бројилото",
+                intro: "<strong>Референца:</strong> Официјалната EVN документација за системот на тарифи е тука: <a href='https://evn.mk/AboutInvoices/TariffSystem.aspx' target='_blank' rel='noopener'>https://evn.mk/AboutInvoices/TariffSystem.aspx</a>",
+                how_title: "Како да го читате дисплејот на бројилото",
+                how_text: "Многу модерни броила течат низ повеќе прикази. Обично дисплејот ја трепка тековната временска вредност, потоа датумот, а потоа ги прикажува кодовите за мерење. На EVN броилата нумеричките кодови означуваат различни збирни вредности:",
+                how_note: "Процедура: притискајте го предниот копче на бројилото повторно (или почекајте) додека не го видите нумеричкиот код (на пр. \"180\") проследен со бројот во kWh. Запишете го бројот што следи по кодот. За читања за висока и ниска тарифа, побарајте ги кодовите 181 и 182.",
+                how_example: "Пример: Секвенцата на дисплејот може да изгледа вака: време → датум → 180 012345.67 → 181 006789.10 → 182 005556.57. Во овој пример 180 е вкупно, 181 е читање за висока тарифа, и 182 е читање за ниска тарифа.",
+                billing_title: "Забелешки за фактурирање и калкулаторот",
+                billing_text: "За да го користите калкулаторот на главната страница, внесете ги претходните и тековните читања за висока и ниска тарифа (кодови 181 и 182). Калкулаторот ги пресметува разликите (тековно − претходно) за секоја тарифа и ги применува тарифните блокови и ослободувањето од 100 kWh за ниската тарифа.",
+                billing_more: "Ако вашето броило го покажува вкупното со повеќе од два децимални места, можете да заокружите или да ги оставите децималите — калкулаторот прифаќа децимални читања.",
+                safety_title: "Безбедност и совети",
+                tip_1: "Секогаш прво прочитајте го нумеричкиот код, па бројот што следи; не мешајте кодови.",
+                tip_2: "Ако приказот е збунувачки, фотографирајте додека го менувате приказот — тоа помага подоцна при идентификација.",
+                tip_3: "Ако мислите дека броилото е дефектно, контактирајте го вашиот снабдувач (EVN) или авторизиран техничар.",
+                footer: "Овој документ е краток водич. За официјални правила за тарифи и детали, погледнете ја EVN страницата за системот на тарифи.",
+                back: "Назад кон калкулаторот"
+            }
+        };
+
+        // i18n apply
+        const LANG_KEY = 'gcc_lang';
+        const select = document.getElementById('lang');
+        const stored = localStorage.getItem(LANG_KEY) || 'en';
+        select.value = ['en','sq','mk'].includes(stored) ? stored : 'en';
+
+        const apply = (lang) => {
+            const dict = texts[lang] || texts.en;
+            document.documentElement.lang = lang;
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (!key) return;
+                if (dict[key]) el.innerHTML = dict[key];
+            });
+            // persist selection in localStorage so index.html picks up the language
+            localStorage.setItem(LANG_KEY, lang);
+        };
+
+        select.addEventListener('change', (e) => apply(e.target.value));
+        // initial
+        apply(select.value);
+    </script>
+</body>
+</html>
