@@ -49,7 +49,7 @@
     <main>
         <div class="info" id="intro">
             <strong data-i18n="info_title">Based on the invoice structure from the XLSX file (EVN North Macedonia)</strong><br>
-            <span data-i18n="info_text">This calculator uses tariff blocks from your file. The low tariff includes <strong>100 kWh free</strong> as shown by invoiced differences (example 556 → 456 billed).</span>
+            <span data-i18n="info_text">This calculator uses tariff blocks from your file. The low tariff is billed as recorded on the invoice.</span>
             <div class="small" style="margin-top:8px;">
                 <a id="docsLink" href="docs.html" data-i18n="docs_link">How the measurement is taken (docs)</a>
             </div>
@@ -86,7 +86,7 @@
                 subtitle: "Based on EVN North Macedonia invoice structure (XLSX)",
                 language: "Language",
                 info_title: "Based on the invoice structure from the XLSX file (EVN North Macedonia)",
-                info_text: "This calculator uses tariff blocks from your file. The low tariff includes <strong>100 kWh free</strong> as shown by invoiced differences (example 556 → 456 billed).",
+                info_text: "This calculator uses tariff blocks from your file. The low tariff is billed as recorded on the invoice.",
                 docs_link: "How the measurement is taken (docs)",
                 prevHigh: "Previous month reading (high tariff):",
                 prevLow: "Previous month reading (low tariff):",
@@ -96,7 +96,7 @@
                 results: "Calculation results",
                 highConsumption: "High-tariff consumption",
                 lowConsumption: "Low-tariff consumption",
-                billedLow: "billed after 100 kWh free",
+                billedLow: "billed as recorded",
                 totalConsumption: "Total consumption",
                 desc: "Description",
                 kWh: "kWh",
@@ -106,7 +106,7 @@
                 block2: "Block 2 (210–630 kWh)",
                 block3: "Block 3 (630–1050 kWh)",
                 block4: "Block 4 (>1050 kWh)",
-                lowTariff: "Low tariff (after 100 kWh free)",
+                lowTariff: "Low tariff",
                 transmission: "Energy transmission",
                 accessFee: "Access fee (fixed)",
                 subtotal: "Subtotal before VAT",
@@ -120,7 +120,7 @@
                 subtitle: "Bazuar në strukturën e faturës nga skedari XLSX (EVN Maqedoni e Veriut)",
                 language: "Gjuha",
                 info_title: "Bazuar në strukturën e faturës nga skedari XLSX (EVN Maqedoni e Veriut)",
-                info_text: "Ky llogaritës përdor tarifat dhe blloqet nga skedari juaj. Konsumi i tarifës së lirë ka <strong>100 kWh falas</strong> (siç tregohet nga diferenca 556 → 456 kWh të faturuara).",
+                info_text: "Ky llogaritës përdor tarifat dhe blloqet nga skedari juaj. Tarifa e lirë paguhet sipas asaj që është faturuar në faturë.",
                 docs_link: "Si matet konsumimi (dokumentacion)",
                 prevHigh: "Leximi i muajit të kaluar (e shtrejtë):",
                 prevLow: "Leximi i muajit të kaluar (e lirë):",
@@ -154,7 +154,7 @@
                 subtitle: "Врз основа на структурата на фактурата од XLSX фајлот (EVN Северна Македонија)",
                 language: "Јазик",
                 info_title: "Врз основа на структурата на фактурата од XLSX фајлот (EVN Северна Македонија)",
-                info_text: "Овој калкулатор ги користи тарифните блокови од вашиот фајл. Ниската тарифа вклучува <strong>100 kWh бесплатно</strong> (како што се гледа од разликата 556 → 456 kWh фактурирано).",
+                info_text: "Овој калкулатор ги користи тарифните блокови од вашиот фајл. Евтината тарифа е фактурирана според вредностите на фактурата.",
                 docs_link: "Како се мери (документација)",
                 prevHigh: "Претходно месечно читање (скапо):",
                 prevLow: "Претходно месечно читање (евтино):",
@@ -242,7 +242,6 @@
             const accessFee = 200;
             const vatRate = 0.18;
             const otherTax = 184;
-            const freeLow = 100; // 100 kWh free low tariff
 
             // High tariff blocks
             let blok1 = Math.min(Math.max(diffHigh,0), 210);
@@ -261,9 +260,8 @@
 
             const highCost = cost1 + cost2 + cost3 + cost4;
 
-            // Low tariff (with 100 kWh free)
-            const chargedLow = Math.max(diffLow - freeLow, 0);
-            const lowCost = chargedLow * rateLow;
+            // Low tariff
+            const lowCost = diffLow * rateLow;
 
             // Total kWh
             const totalKWh = Math.max(diffHigh,0) + Math.max(diffLow,0);
@@ -286,7 +284,7 @@
 
             let html = `<h2>${t.results}</h2>
                 <p><strong>${t.highConsumption}:</strong> ${diffHigh} ${t.kWh || 'kWh'}</p>
-                <p><strong>${t.lowConsumption}:</strong> ${diffLow} ${t.kWh || 'kWh'} (${t.billedLow}: ${chargedLow} ${t.kWh || 'kWh'})</p>
+                <p><strong>${t.lowConsumption}:</strong> ${diffLow} ${t.kWh || 'kWh'} (${t.billedLow})</p>
                 <p><strong>${t.totalConsumption}:</strong> ${totalKWh} ${t.kWh || 'kWh'}</p>
                 <table>
                     <tr><th>${t.desc}</th><th>${t.kWh}</th><th>${t.price}</th><th>${t.amount}</th></tr>
@@ -294,7 +292,7 @@
                     <tr><td>${t.block2}</td><td>${blok2}</td><td>${rateBlok2}</td><td>${nf.format(cost2)}</td></tr>
                     <tr><td>${t.block3}</td><td>${blok3}</td><td>${rateBlok3}</td><td>${nf.format(cost3)}</td></tr>
                     <tr><td>${t.block4}</td><td>${blok4}</td><td>${rateBlok4}</td><td>${nf.format(cost4)}</td></tr>
-                    <tr><td>${t.lowTariff}</td><td>${chargedLow}</td><td>${rateLow}</td><td>${nf.format(lowCost)}</td></tr>
+                    <tr><td>${t.lowTariff}</td><td>${diffLow}</td><td>${rateLow}</td><td>${nf.format(lowCost)}</td></tr>
                     <tr><td>${t.transmission}</td><td>${totalKWh}</td><td>${transRate}</td><td>${nf.format(transCost)}</td></tr>
                     <tr><td>${t.accessFee}</td><td>-</td><td>-</td><td>${nf2.format(accessFee)}</td></tr>
                     <tr><td><strong>${t.subtotal}</strong></td><td>-</td><td>-</td><td><strong>${nf.format(subtotal)}</strong></td></tr>
