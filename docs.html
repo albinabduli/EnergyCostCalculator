@@ -5,29 +5,198 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title data-i18n="title">How the meter measurements are taken</title>
     <style>
-        body { font-family: Arial, sans-serif; margin:20px; background:#fafafa; color:#22313f; }
-        main { max-width:900px; background:white; padding:18px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
-        h1 { margin-top:0; }
-        .section { margin-top:14px; }
-        .note { background:#fffbe6; padding:10px; border-radius:6px; margin-top:10px; }
-        .kbd { background:#f2f2f2; padding:3px 8px; border-radius:4px; font-family:monospace; }
-        .lang-select { padding:8px; border-radius:6px; border:1px solid #ddd; background:white; }
-        a { color:#1a73e8; }
+        /* Base styles */
+        :root {
+            --main-padding: 16px;
+            --border-radius: 8px;
+            --shadow: 0 2px 10px rgba(0,0,0,0.06);
+            --text-color: #22313f;
+            --border-color: #ddd;
+            --background-light: #fafafa;
+            --note-background: #fffbe6;
+            --link-color: #1a73e8;
+        }
+
+        /* Reset and base styles */
+        * { box-sizing: border-box; }
+        
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, Arial, sans-serif;
+            margin: 0;
+            padding: var(--main-padding);
+            background: var(--background-light);
+            color: var(--text-color);
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.5;
+        }
+
+        /* Layout containers */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 var(--main-padding);
+        }
+
+        header { 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        main { 
+            background: white;
+            padding: var(--main-padding);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+        }
+
+        /* Typography */
+        h2 { 
+            margin: 0 0 16px 0;
+            font-size: clamp(1.25rem, 4vw, 1.5rem);
+            line-height: 1.2;
+        }
+
+        h3 {
+            margin: 24px 0 16px 0;
+            font-size: clamp(1.1rem, 3vw, 1.25rem);
+        }
+
+        p {
+            margin: 0 0 16px 0;
+        }
+
+        /* Sections and Components */
+        .section {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .section:first-child {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .note { 
+            background: var(--note-background);
+            padding: 16px;
+            border-radius: var(--border-radius);
+            margin: 16px 0;
+            font-size: 0.95rem;
+        }
+
+        .kbd { 
+            background: #f2f2f2;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        /* Lists */
+        ul {
+            padding-left: 20px;
+            margin: 16px 0;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Links */
+        a { 
+            color: var(--link-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .lang-select {
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            background: white;
+            font-size: 16px;
+            min-height: 44px; /* Better touch target */
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .container {
+                padding: 0;
+            }
+
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            main {
+                padding: 16px;
+            }
+
+            .section {
+                margin-top: 20px;
+                padding-top: 12px;
+            }
+
+            .note {
+                padding: 12px;
+            }
+        }
+
+        /* iOS specific optimizations */
+        @supports (-webkit-touch-callout: none) {
+            select {
+                font-size: 16px !important; /* Prevents zoom on iOS */
+            }
+        }
     </style>
 </head>
 <body>
-    <header style="display:flex;justify-content:space-between;align-items:center;max-width:900px;margin-bottom:12px;">
-        <h2 data-i18n="title">How the meter measurements are taken</h2>
-        <div>
-            <select id="lang" class="lang-select" aria-label="language selector">
-                <option value="en">English</option>
-                <option value="sq">Shqip (Albanian)</option>
-                <option value="mk">Македонски (Macedonian)</option>
-            </select>
-        </div>
-    </header>
+    <div class="container">
+        <header>
+            <h2 data-i18n="title">How the meter measurements are taken</h2>
+            <div class="controls">
+                <select id="lang" class="lang-select" aria-label="language selector">
+                    <option value="sq">Shqip (Albanian)</option>
+                    <option value="en">English</option>
+                    <option value="mk">Македонски (Macedonian)</option>
+                </select>
+            </div>
+        </header>
 
-    <main>
+        <main>
         <section class="section">
             <p data-i18n="intro"><strong>Reference:</strong> The official EVN documentation for tariff system is here: <a href="https://evn.mk/AboutInvoices/TariffSystem.aspx" target="_blank" rel="noopener">https://evn.mk/AboutInvoices/TariffSystem.aspx</a></p>
         </section>
@@ -48,8 +217,27 @@
 
         <section class="section">
             <h3 data-i18n="billing_title">Notes for billing and the calculator</h3>
-            <p data-i18n="billing_text">To use the calculator on the main page, input the previous and current readings for high and low tariffs (codes 181 and 182). The calculator computes the difference (current − previous) for each tariff and applies tariff blocks and the low-tariff free allowance (commonly 100 kWh free in your tariff data).</p>
+            <p data-i18n="billing_text">To use the calculator on the main page, input the previous and current readings for high and low tariffs (codes 181 and 182). The calculator computes the difference (current − previous) for each tariff and applies the appropriate tariff blocks based on the number of days between readings.</p>
             <p data-i18n="billing_more">If your meter shows totals with more than two decimals, you can round or keep the decimals — the calculator accepts decimal readings.</p>
+        </section>
+
+        <section class="section">
+            <h3 data-i18n="blocks_title">Tariff Blocks and Pricing</h3>
+            <p data-i18n="blocks_text">The high tariff consumption is divided into blocks, with different rates for each block. For a standard 30-day period, the blocks are:</p>
+            <ul>
+                <li data-i18n="blocks_range">Block 1: 0–210 kWh<br>
+                    Block 2: 211–630 kWh<br>
+                    Block 3: 631–1050 kWh<br>
+                    Block 4: above 1050 kWh</li>
+            </ul>
+            <p data-i18n="blocks_pricing">The cost for each block is:</p>
+            <ul>
+                <li data-i18n="blocks_rates">Block 1: 4,4376 denars/kWh<br>
+                    Block 2: 5,5664 denars/kWh<br>
+                    Block 3: 7,4314 denars/kWh<br>
+                    Block 4: 18,3035 denars/kWh</li>
+            </ul>
+            <div class="note" data-i18n="blocks_note">Important: These blocks adjust based on the actual number of days between meter readings. For example, in a 28-day period, Block 1 becomes 0-196 kWh (7 kWh/day × 28 days), Block 2 becomes 197-588 kWh, and so on.</div>
         </section>
 
         <section class="section">
@@ -63,9 +251,10 @@
 
         <section class="section">
             <p class="small" data-i18n="footer">This documentation is a short guide. For official tariff rules and details see EVN's Tariff System page linked above.</p>
-            <p style="margin-top:12px;"><a href="index.html" data-i18n="back">Back to calculator</a></p>
+            <p><a href="index.html" data-i18n="back">Back to calculator</a></p>
         </section>
     </main>
+    </div>
 
     <script>
         // Simple multi-lang for docs using same keys as content
@@ -78,8 +267,14 @@
                 how_note: "Procedure: press the meter's front button repeatedly (or wait) until you see the meter show the numeric code (e.g., \"180\") followed by the kWh number. Note the value shown after the code. For high and low tariff readings look for codes 181 and 182 respectively.",
                 how_example: "Example: The display sequence can look like: time → date → 180 012345.67 → 181 006789.10 → 182 005556.57. In this example 180 is the total, 181 is high-tariff reading, and 182 is low-tariff reading.",
                 billing_title: "Notes for billing and the calculator",
-                billing_text: "To use the calculator on the main page, input the previous and current readings for high and low tariffs (codes 181 and 182). The calculator computes the difference (current − previous) for each tariff and applies the appropriate tariff blocks.",
+                billing_text: "To use the calculator on the main page, input the previous and current readings for high and low tariffs (codes 181 and 182). The calculator computes the difference (current − previous) for each tariff and applies the appropriate tariff blocks based on the number of days between readings.",
                 billing_more: "If your meter shows totals with more than two decimals, you can round or keep the decimals — the calculator accepts decimal readings.",
+                blocks_title: "Tariff Blocks and Pricing",
+                blocks_text: "The high tariff consumption is divided into blocks, with different rates for each block. For a standard 30-day period, the blocks are:",
+                blocks_range: "Block 1: 0–210 kWh<br>Block 2: 211–630 kWh<br>Block 3: 631–1050 kWh<br>Block 4: above 1050 kWh",
+                blocks_pricing: "The cost for each block is:",
+                blocks_rates: "Block 1: 4,4376 denars/kWh<br>Block 2: 5,5664 denars/kWh<br>Block 3: 7,4314 denars/kWh<br>Block 4: 18,3035 denars/kWh",
+                blocks_note: "Important: These blocks adjust based on the actual number of days between meter readings. For example, in a 28-day period, Block 1 becomes 0-196 kWh (7 kWh/day × 28 days), Block 2 becomes 197-588 kWh, and so on.",
                 safety_title: "Safety and tips",
                 tip_1: "Always read the numeric code then the number that follows; do not mix codes.",
                 tip_2: "If the display is confusing, take photos while cycling the display — this helps identify codes and values later.",
@@ -95,8 +290,14 @@
                 how_note: "Procedura: shtypni vazhdimisht butonin në pjesën e përparme të matësit (ose prisni) deri sa të shihni kodin numerik (p.sh. \"180\") i ndjekur nga numri në kWh. Shënoni vlerën pas kodit. Për leximet e tarifës së lartë dhe të ulët kërkoni kodet 181 dhe 182 përkatësisht.",
                 how_example: "Shembull: Seanca e shfaqjes mund të duket: ora → data → 180 012345.67 → 181 006789.10 → 182 005556.57. Në këtë shembull 180 është totali, 181 është leximi i tarifës së lartë, dhe 182 është leximi i tarifës së ulët.",
                 billing_title: "Shënime për faturimin dhe llogaritësin",
-                billing_text: "Për të përdorur llogaritësin në faqen kryesore, vendosni leximet e mëparshme dhe aktuale për tarifat e larta dhe të ulëta (kodet 181 dhe 182). Llogaritësi bën dallimin (aktual – mëparshëm) për çdo tarifë dhe aplikon blloqet e tarifave.",
+                billing_text: "Për të përdorur llogaritësin në faqen kryesore, vendosni leximet e mëparshme dhe aktuale për tarifat e larta dhe të ulëta (kodet 181 dhe 182). Llogaritësi bën dallimin (aktual – mëparshëm) për çdo tarifë dhe aplikon blloqet e tarifave bazuar në numrin e ditëve mes leximeve.",
                 billing_more: "Nëse matësi tregon total me më shumë se dy dhjetësorë, mund ta rrumbullakosni ose ta lini — llogaritësi pranon lexime me dhjetësor.",
+                blocks_title: "Blloqet e Tarifave dhe Çmimet",
+                blocks_text: "Konsumi i tarifës së lartë ndahet në blloqe, me norma të ndryshme për secilin bllok. Për një periudhë standarde 30-ditore, blloqet janë:",
+                blocks_range: "Blloku 1: 0–210 kWh<br>Blloku 2: 211–630 kWh<br>Blloku 3: 631–1050 kWh<br>Blloku 4: mbi 1050 kWh",
+                blocks_pricing: "Kostoja për secilin bllok është:",
+                blocks_rates: "Blloku 1: 4,4376 denarë/kWh<br>Blloku 2: 5,5664 denarë/kWh<br>Blloku 3: 7,4314 denarë/kWh<br>Blloku 4: 18,3035 denarë/kWh",
+                blocks_note: "E rëndësishme: Këto blloqe përshtaten bazuar në numrin aktual të ditëve midis leximeve të matësit. Për shembull, në një periudhë 28-ditore, Blloku 1 bëhet 0-196 kWh (7 kWh/ditë × 28 ditë), Blloku 2 bëhet 197-588 kWh, e kështu me radhë.",
                 safety_title: "Siguria dhe këshillat",
                 tip_1: "Gjithmonë lexoni kodin numerik pastaj numrin që pason; mos i përzieni kodet.",
                 tip_2: "Nëse shfaqja është konfuze, bëni foto ndërsa qarkulloni shfaqen — kjo ndihmon në identifikimin e kodeve më vonë.",
@@ -112,8 +313,14 @@
                 how_note: "Процедура: притискајте го предниот копче на бројилото повторно (или почекајте) додека не го видите нумеричкиот код (на пр. \"180\") проследен со бројот во kWh. Запишете го бројот што следи по кодот. За читања за висока и ниска тарифа, побарајте ги кодовите 181 и 182.",
                 how_example: "Пример: Секвенцата на дисплејот може да изгледа вака: време → датум → 180 012345.67 → 181 006789.10 → 182 005556.57. Во овој пример 180 е вкупно, 181 е читање за висока тарифа, и 182 е читање за ниска тарифа.",
                 billing_title: "Забелешки за фактурирање и калкулаторот",
-                billing_text: "За да го користите калкулаторот на главната страница, внесете ги претходните и тековните читања за висока и ниска тарифа (кодови 181 и 182). Калкулаторот ги пресметува разликите (тековно − претходно) за секоја тарифа и ги применува тарифните блокови.",
+                billing_text: "За да го користите калкулаторот на главната страница, внесете ги претходните и тековните читања за висока и ниска тарифа (кодови 181 и 182). Калкулаторот ги пресметува разликите (тековно − претходно) за секоја тарифа и ги применува тарифните блокови врз основа на бројот на денови помеѓу читањата.",
                 billing_more: "Ако вашето броило го покажува вкупното со повеќе од два децимални места, можете да заокружите или да ги оставите децималите — калкулаторот прифаќа децимални читања.",
+                blocks_title: "Тарифни блокови и цени",
+                blocks_text: "Потрошувачката на висока тарифа е поделена во блокови, со различни цени за секој блок. За стандарден период од 30 дена, блоковите се:",
+                blocks_range: "Блок 1: 0–210 kWh<br>Блок 2: 211–630 kWh<br>Блок 3: 631–1050 kWh<br>Блок 4: над 1050 kWh",
+                blocks_pricing: "Цената за секој блок е:",
+                blocks_rates: "Блок 1: 4,4376 денари/kWh<br>Блок 2: 5,5664 денари/kWh<br>Блок 3: 7,4314 денари/kWh<br>Блок 4: 18,3035 денари/kWh",
+                blocks_note: "Важно: Овие блокови се прилагодуваат според фактичкиот број на денови помеѓу читањата на броилото. На пример, во период од 28 дена, Блок 1 станува 0-196 kWh (7 kWh/ден × 28 дена), Блок 2 станува 197-588 kWh, и така натаму.",
                 safety_title: "Безбедност и совети",
                 tip_1: "Секогаш прво прочитајте го нумеричкиот код, па бројот што следи; не мешајте кодови.",
                 tip_2: "Ако приказот е збунувачки, фотографирајте додека го менувате приказот — тоа помага подоцна при идентификација.",
@@ -127,10 +334,10 @@
         const LANG_KEY = 'gcc_lang';
         const select = document.getElementById('lang');
         const stored = localStorage.getItem(LANG_KEY) || 'en';
-        select.value = ['en','sq','mk'].includes(stored) ? stored : 'en';
+        select.value = ['en','sq','mk'].includes(stored) ? stored : 'sq';
 
         const apply = (lang) => {
-            const dict = texts[lang] || texts.en;
+            const dict = texts[lang] || texts.sq;
             document.documentElement.lang = lang;
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
