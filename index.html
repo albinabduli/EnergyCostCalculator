@@ -349,10 +349,10 @@
                 kWh: "kWh",
                 price: "Price (MKD/kWh)",
                 amount: "Amount (MKD)",
-                block1: "Block 1",
-                block2: "Block 2",
-                block3: "Block 3",
-                block4: "Block 4",
+                block1: "Block 1 (0–210 kWh)",
+                block2: "Block 2 (210–630 kWh)",
+                block3: "Block 3 (630–1050 kWh)",
+                block4: "Block 4 (>1050 kWh)",
                 lowTariff: "Low tariff",
                 transmission: "Energy transmission",
                 accessFee: "Access fee (fixed)",
@@ -763,10 +763,10 @@
                 <p><strong>${t.totalConsumption}:</strong> ${totalKWh} ${t.kWh || 'kWh'}</p>
                 <table>
                     <tr><th>${t.desc}</th><th>${t.kWh}</th><th>${t.price}</th><th>${t.amount}</th></tr>
-                    <tr><td>${t.block1} (0–${block1Threshold} kWh)</td><td>${blok1}</td><td>${rateBlok1}</td><td>${nf.format(cost1)}</td></tr>
-                    <tr><td>${t.block2} (${block1Threshold+1}–${block1Threshold+block2Threshold} kWh)</td><td>${blok2}</td><td>${rateBlok2}</td><td>${nf.format(cost2)}</td></tr>
-                    <tr><td>${t.block3} (${block1Threshold+block2Threshold+1}–${block1Threshold+block2Threshold+block3Threshold} kWh)</td><td>${blok3}</td><td>${rateBlok3}</td><td>${nf.format(cost3)}</td></tr>
-                    <tr><td>${t.block4} (>${block1Threshold+block2Threshold+block3Threshold} kWh)</td><td>${blok4}</td><td>${rateBlok4}</td><td>${nf.format(cost4)}</td></tr>
+                    <tr><td>${t.block1.replace('210', block1Threshold)}</td><td>${blok1}</td><td>${rateBlok1}</td><td>${nf.format(cost1)}</td></tr>
+                    <tr><td>${t.block2.replace('210', block1Threshold).replace('630', block1Threshold+block2Threshold)}</td><td>${blok2}</td><td>${rateBlok2}</td><td>${nf.format(cost2)}</td></tr>
+                    <tr><td>${t.block3.replace('630', block1Threshold+block2Threshold).replace('1050', block1Threshold+block2Threshold+block3Threshold)}</td><td>${blok3}</td><td>${rateBlok3}</td><td>${nf.format(cost3)}</td></tr>
+                    <tr><td>${t.block4.replace('1050', block1Threshold+block2Threshold+block3Threshold)}</td><td>${blok4}</td><td>${rateBlok4}</td><td>${nf.format(cost4)}</td></tr>
                     <tr><td>${t.lowTariff}</td><td>${diffLow}</td><td>${rateLow}</td><td>${nf.format(lowCost)}</td></tr>
                     <tr><td>${t.transmission}</td><td>${totalKWh}</td><td>${transRate}</td><td>${nf.format(transCost)}</td></tr>
                     <tr><td>${t.accessFee}</td><td>-</td><td>-</td><td>${nf2.format(accessFee)}</td></tr>
