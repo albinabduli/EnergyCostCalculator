@@ -292,51 +292,6 @@
             </form>
 
             <div id="result" aria-live="polite"></div>
-        </main>            <main>
-            <div class="info" id="intro">
-                <strong data-i18n="info_title">Based on the invoice structure from the XLSX file (EVN North Macedonia)</strong><br>
-                <span data-i18n="info_text">This calculator uses tariff blocks that adjust based on the number of days between meter readings. The low tariff is billed as recorded on the invoice.</span>
-                <div class="small" style="margin-top:8px;">
-                    <a id="docsLink" href="docs.html" data-i18n="docs_link">How the measurement is taken (docs)</a>
-                </div>
-            </div>
-
-            <form id="calcForm" aria-labelledby="calcForm">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="prevDate" data-i18n="prevDate">Previous reading date:</label>
-                        <input type="date" id="prevDate" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="currDate" data-i18n="currDate">Current reading date:</label>
-                        <input type="date" id="currDate" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="prevHigh" data-i18n="prevHigh">Previous month reading (high tariff):</label>
-                    <input type="number" id="prevHigh" required value="28157" inputmode="decimal">
-                </div>
-
-                <div class="form-group">
-                    <label for="prevLow" data-i18n="prevLow">Previous month reading (low tariff):</label>
-                    <input type="number" id="prevLow" required value="26713" inputmode="decimal">
-                </div>
-
-                <div class="form-group">
-                    <label for="currHigh" data-i18n="currHigh">Current month reading (high tariff):</label>
-                    <input type="number" id="currHigh" required value="28678" inputmode="decimal">
-                </div>
-
-                <div class="form-group">
-                    <label for="currLow" data-i18n="currLow">Current month reading (low tariff):</label>
-                    <input type="number" id="currLow" required value="27269" inputmode="decimal">
-                </div>
-
-                <button type="submit" id="calcBtn" data-i18n="calcBtn">Calculate bill</button>
-            </form>
-
-            <div id="result" aria-live="polite"></div>
         </main>
 
     <footer>
