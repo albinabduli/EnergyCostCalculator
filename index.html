@@ -572,13 +572,24 @@
             // Add select to container
             container.insertBefore(newSelect, container.firstChild);
             
-            // Setup change handler for showing/hiding delete buttons
+            // Setup change handler for showing/hiding delete buttons and loading calculation
             newSelect.addEventListener('change', function(e) {
                 const idx = parseInt(e.target.value);
+                // Show/hide delete buttons
                 const buttons = container.querySelectorAll('div');
                 buttons.forEach((btn, i) => {
                     btn.style.display = i === idx ? 'inline-block' : 'none';
                 });
+                
+                // Load calculation data
+                if (!isNaN(idx)) {
+                    const history = loadHistory();
+                    if (idx >= 0 && idx < history.length) {
+                        loadCalculation(history[idx]);
+                        // Trigger form submission to show results
+                        document.getElementById('calcForm').dispatchEvent(new Event('submit'));
+                    }
+                }
             });
         };
 
@@ -647,34 +658,6 @@
         });
 
         // --- Calculation logic (same as original, with translated output) ---
-        // Setup history dropdown handler
-        document.getElementById('history').addEventListener('change', function(e) {
-            const idx = parseInt(e.target.value);
-            if (isNaN(idx)) return;
-            
-            const history = loadHistory();
-            if (idx >= 0 && idx < history.length) {
-                loadCalculation(history[idx]);
-                // Calculate and show results WITHOUT saving to history
-                e.preventDefault();
-                const lang = localStorage.getItem(LANG_KEY) || 'en';
-                const t = i18n[lang];
-                
-                // Use the existing calculation logic but wrap it in a function
-                const calculateAndDisplay = (formData) => {
-                    // [Previous calculation code remains the same, just don't call saveToHistory()]
-                    const prevHigh = parseFloat(formData.prevHigh) || 0;
-                    const prevLow = parseFloat(formData.prevLow) || 0;
-                    const currHigh = parseFloat(formData.currHigh) || 0;
-                    const currLow = parseFloat(formData.currLow) || 0;
-                    
-                    // Rest of the calculation code...
-                    // [Copy the calculation code from the submit handler but remove the saveToHistory call]
-                };
-                
-                calculateAndDisplay(history[idx]);
-            }
-        });
 
         // Initial setup
         document.addEventListener('DOMContentLoaded', function() {
